@@ -5,35 +5,26 @@ import { MdArrowBack, MdArrowForward } from "react-icons/md";
 
 const projects = [
   {
-    title: "Solid Starters",
-    category: "Low-Code Platform",
-    tools: "Angular, Next.js, NestJS, MongoDB",
-    image: "/images/Solidx.png",
+    title: "Foodies Travel Map",
+    category: "Web Application",
+    tools: "HTML, CSS, JavaScript. Features: Interactive UI, organized location display",
+    image: "/images/foodies_travel_map.png",
+    github: "https://github.com/vedbhadani/Foodies-Travel-Map"
   },
   {
-    title: "Radix",
-    category: "E-Commerce",
-    tools: "Angular, Next.js, NestJS, CMS",
-    image: "/images/radix.png",
+    title: "Catch Falling Object Game",
+    category: "Browser Game",
+    tools: "JavaScript, HTML, CSS. Features: Real-time gameplay, score tracking",
+    image: "/images/falling_object_game.png",
+    github: "https://github.com/AkkiKrsingh2005/catch-falling-object"
   },
   {
-    title: "Bond Cancellation",
-    category: "Import-Export Automation",
-    tools: "Angular, Next.js, NestJS, Workflows",
-    image: "/images/bond.png",
-  },
-  {
-    title: "Sapphire",
-    category: "CRM Platform",
-    tools: "AngularJS, NestJS, PostgreSQL",
-    image: "/images/sapphire.png",
-  },
-  {
-    title: "Mpro",
-    category: "Insurance Platform",
-    tools: "React.js, Node.js, Microservices",
-    image: "/images/Maxlife.png",
-  },
+    title: "PokePo",
+    category: "Interactive Web App",
+    tools: "JavaScript, HTML, CSS. Features: Dynamic content, API data fetching",
+    image: "/images/pokepo_app.png",
+    github: "https://github.com/AkkiKrsingh2005/PokePo"
+  }
 ];
 
 const Work = () => {
@@ -111,11 +102,14 @@ const Work = () => {
                         <div className="carousel-tools">
                           <span className="tools-label">Tools & Features</span>
                           <p>{project.tools}</p>
+                          {project.github && (
+                            <a href={project.github} target="_blank" rel="noreferrer" style={{color: '#fff', marginTop: '10px', display: 'inline-block', textDecoration: 'underline'}}>🔗 View on GitHub</a>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="carousel-image-wrapper">
-                      <WorkImage image={project.image} alt={project.title} />
+                      {project.image ? <WorkImage image={project.image} alt={project.title} /> : <div style={{width: '100%', height: '100%', background: '#222', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888'}}>No Image Available</div>}
                     </div>
                   </div>
                 </div>

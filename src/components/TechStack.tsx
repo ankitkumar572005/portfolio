@@ -169,6 +169,38 @@ const TechStack = () => {
   return (
     <div className="techstack">
       <h2> My Techstack</h2>
+      <div style={{
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: '20px', 
+        padding: '20px 5%',
+        color: '#fff',
+        zIndex: 10,
+        position: 'relative',
+        textAlign: 'center',
+        background: 'rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '15px',
+        margin: '20px auto',
+        maxWidth: '1000px'
+      }}>
+        <div>
+          <h3 style={{color: '#bc80ff', marginBottom: '10px'}}>Programming</h3>
+          <p>Python, JavaScript, TypeScript</p>
+        </div>
+        <div>
+          <h3 style={{color: '#bc80ff', marginBottom: '10px'}}>Web Dev</h3>
+          <p>HTML, CSS</p>
+        </div>
+        <div>
+          <h3 style={{color: '#bc80ff', marginBottom: '10px'}}>Data & AI</h3>
+          <p>Pandas, NumPy</p>
+        </div>
+        <div>
+          <h3 style={{color: '#bc80ff', marginBottom: '10px'}}>Core Concepts</h3>
+          <p>DSA, DBMS, SQL</p>
+        </div>
+      </div>
 
       <Canvas
         shadows
