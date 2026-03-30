@@ -15,6 +15,26 @@ const Achievements = () => {
           <div className="career-info-box">
             <div className="career-info-in">
               <div className="career-role">
+                <h4>Open Source Contributor</h4>
+                <h5>GitHub (Global)</h5>
+              </div>
+            </div>
+            <p>
+              Successfully contributed <strong>35+ Pull Requests</strong> to major projects like Vue.js, React Native, and Webpack. Focused on documentation and core fixes to improve developer experience. 
+              {" "}
+              <a 
+                href="https://github.com/pulls?q=is%3Apr+author%3AAkkiKrsingh2005+is%3Apublic" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={{color: '#00D1FF', textDecoration: 'none'}}
+              >
+                View my PRs on GitHub ↗
+              </a>
+            </p>
+          </div>
+          <div className="career-info-box">
+            <div className="career-info-in">
+              <div className="career-role">
                 <h4>Hackathon Participant</h4>
                 <h5>Newton School Of Technology</h5>
               </div>
