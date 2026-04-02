@@ -1,7 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./styles/Work.css";
 import WorkImage from "./WorkImage";
-import { MdArrowBack, MdArrowForward } from "react-icons/md";
 
 const projects = [
   {
@@ -13,7 +12,7 @@ const projects = [
     github: "https://github.com/AkkiKrsingh2005/ai-rag-navigator",
     demo: "https://akkikrsingh2005-ai-rag-navigator-app-5gfm3y.streamlit.app/",
     pinned: true,
-    color: "from-violet-500 to-cyan-400"
+    accent: "#5eead4"
   },
   {
     title: "Plant Health Vision",
@@ -24,7 +23,7 @@ const projects = [
     github: "https://github.com/AkkiKrsingh2005/plant-health-vision",
     demo: "https://akkikrsingh2005-plant-health-vision-app-cuhriy.streamlit.app/",
     pinned: true,
-    color: "from-emerald-500 to-teal-400"
+    accent: "#34d399"
   },
   {
     title: "AI Gesture OS Control",
@@ -35,7 +34,7 @@ const projects = [
     github: "https://github.com/AkkiKrsingh2005/ai-gesture-os-control",
     demo: null,
     pinned: true,
-    color: "from-orange-500 to-rose-400"
+    accent: "#fb923c"
   },
   {
     title: "Foodies Travel Map",
@@ -46,149 +45,156 @@ const projects = [
     github: "https://github.com/vedbhadani/Foodies-Travel-Map",
     demo: null,
     pinned: false,
-    color: "from-yellow-500 to-orange-400"
+    accent: "#facc15"
   },
   {
     title: "Catch Falling Object",
     category: "Browser Game",
-    description: "A real-time browser game with dynamic object spawning, score tracking, and increasing difficulty.",
+    description: "A real-time browser game with dynamic object spawning, score tracking, and progressively increasing difficulty.",
     tags: ["JavaScript", "HTML Canvas", "CSS"],
     image: "/images/falling_object_game.png",
     github: "https://github.com/AkkiKrsingh2005/catch-falling-object",
     demo: null,
     pinned: false,
-    color: "from-blue-500 to-indigo-400"
+    accent: "#818cf8"
   },
   {
     title: "PokePo",
     category: "Interactive Web App",
-    description: "A dynamic Pokémon explorer with live API data-fetching, search, and interactive card animations.",
+    description: "A dynamic Pokémon explorer with live API data-fetching, search functionality, and interactive card animations.",
     tags: ["JavaScript", "REST API", "HTML", "CSS"],
     image: "/images/pokepo_app.png",
     github: "https://github.com/AkkiKrsingh2005/PokePo",
     demo: null,
     pinned: false,
-    color: "from-pink-500 to-red-400"
+    accent: "#f472b6"
   }
 ];
 
 const Work = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const isScrolling = useRef(false);
 
-  const goToSlide = useCallback(
-    (index: number) => {
-      if (isAnimating) return;
-      setIsAnimating(true);
+  const scrollToIndex = useCallback((index: number) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const slides = container.querySelectorAll<HTMLElement>(".snap-slide");
+    if (slides[index]) {
+      slides[index].scrollIntoView({ behavior: "smooth", block: "start" });
       setCurrentIndex(index);
-      setTimeout(() => setIsAnimating(false), 500);
-    },
-    [isAnimating]
-  );
+    }
+  }, []);
 
-  const goToPrev = useCallback(() => {
-    const newIndex = currentIndex === 0 ? projects.length - 1 : currentIndex - 1;
-    goToSlide(newIndex);
-  }, [currentIndex, goToSlide]);
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
 
-  const goToNext = useCallback(() => {
-    const newIndex = currentIndex === projects.length - 1 ? 0 : currentIndex + 1;
-    goToSlide(newIndex);
-  }, [currentIndex, goToSlide]);
+    const handleScroll = () => {
+      if (isScrolling.current) return;
+      const slides = container.querySelectorAll<HTMLElement>(".snap-slide");
+      slides.forEach((slide, i) => {
+        const rect = slide.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        if (Math.abs(rect.top - containerRect.top) < 50) {
+          setCurrentIndex(i);
+        }
+      });
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="work-section" id="work">
-      <div className="work-container section-container">
-        <h2>
-          My <span>Work</span>
-        </h2>
+      {/* Fixed Section Title */}
+      <div className="work-title-bar">
+        <h2>My <span>Work</span></h2>
+        <p className="work-subtitle">{currentIndex + 1} / {projects.length}</p>
+      </div>
 
-        <div className="carousel-wrapper">
-          {/* Navigation Arrows */}
-          <button className="carousel-arrow carousel-arrow-left" onClick={goToPrev} aria-label="Previous project" data-cursor="disable">
-            <MdArrowBack />
-          </button>
-          <button className="carousel-arrow carousel-arrow-right" onClick={goToNext} aria-label="Next project" data-cursor="disable">
-            <MdArrowForward />
-          </button>
+      {/* Side Dot Navigation */}
+      <div className="side-dots">
+        {projects.map((proj, i) => (
+          <button
+            key={i}
+            className={`side-dot ${i === currentIndex ? "side-dot-active" : ""} ${proj.pinned ? "side-dot-pinned" : ""}`}
+            onClick={() => scrollToIndex(i)}
+            aria-label={proj.title}
+            title={proj.title}
+            data-cursor="disable"
+            style={i === currentIndex ? { background: proj.accent, borderColor: proj.accent, boxShadow: `0 0 10px ${proj.accent}80` } : {}}
+          />
+        ))}
+      </div>
 
-          {/* Slides */}
-          <div className="carousel-track-container">
-            <div className="carousel-track" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-              {projects.map((proj, index) => (
-                <div className="carousel-slide" key={index}>
-                  <div className={`carousel-content ${proj.pinned ? "is-pinned" : ""}`}>
-                    {/* Left Info Panel */}
-                    <div className="carousel-info">
-                      <div className="carousel-number">
-                        <h3>0{index + 1}</h3>
-                      </div>
-                      <div className="carousel-details">
-                        {proj.pinned && (
-                          <div className="pinned-badge">
-                            <span className="pinned-dot"></span>
-                            Featured AI/ML Project
-                          </div>
-                        )}
-                        <h4>{proj.title}</h4>
-                        <p className="carousel-category">{proj.category}</p>
-                        <p className="carousel-description">{proj.description}</p>
+      {/* Scroll Container */}
+      <div className="snap-container" ref={scrollRef}>
+        {projects.map((proj, index) => (
+          <div className="snap-slide" key={index}>
+            <div className="slide-inner">
 
-                        {/* Tech Tags */}
-                        <div className="tech-tags">
-                          {proj.tags.map((tag, i) => (
-                            <span key={i} className="tech-tag">{tag}</span>
-                          ))}
-                        </div>
-
-                        {/* CTA Buttons */}
-                        <div className="cta-buttons">
-                          {proj.github && (
-                            <a href={proj.github} target="_blank" rel="noreferrer" className="cta-btn cta-btn-outline">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                              GitHub
-                            </a>
-                          )}
-                          {proj.demo && (
-                            <a href={proj.demo} target="_blank" rel="noreferrer" className="cta-btn cta-btn-primary">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                              Live Demo
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Image Panel */}
-                    <div className="carousel-image-wrapper">
-                      {proj.pinned && <div className={`image-glow-border gradient-${index}`}></div>}
-                      {proj.image
-                        ? <WorkImage image={proj.image} alt={proj.title} />
-                        : <div className="no-image-placeholder">No Preview Available</div>
-                      }
-                    </div>
-                  </div>
+              {/* Left: Info */}
+              <div className="slide-info">
+                <div className="slide-number" style={{ color: proj.accent }}>
+                  0{index + 1}
                 </div>
-              ))}
+
+                {proj.pinned && (
+                  <div className="pinned-badge" style={{ borderColor: `${proj.accent}50`, color: proj.accent }}>
+                    <span className="pinned-dot" style={{ background: proj.accent, boxShadow: `0 0 8px ${proj.accent}` }}></span>
+                    Featured AI/ML Project
+                  </div>
+                )}
+
+                <h3 className="slide-title">{proj.title}</h3>
+                <p className="slide-category" style={{ color: proj.accent }}>{proj.category}</p>
+                <p className="slide-description">{proj.description}</p>
+
+                <div className="tech-tags">
+                  {proj.tags.map((tag, i) => (
+                    <span key={i} className="tech-tag" style={{ borderColor: `${proj.accent}30` }}>{tag}</span>
+                  ))}
+                </div>
+
+                <div className="cta-buttons">
+                  {proj.github && (
+                    <a href={proj.github} target="_blank" rel="noreferrer" className="cta-btn cta-btn-outline">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                      GitHub
+                    </a>
+                  )}
+                  {proj.demo && (
+                    <a href={proj.demo} target="_blank" rel="noreferrer" className="cta-btn cta-btn-primary" style={{ background: `linear-gradient(135deg, ${proj.accent}, #8b5cf6)`, boxShadow: `0 4px 20px ${proj.accent}40` }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      Live Demo
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: Image */}
+              <div className="slide-image-wrap">
+                <div className="slide-image-glow" style={{ background: `radial-gradient(circle, ${proj.accent}20 0%, transparent 70%)` }}></div>
+                {proj.image
+                  ? <WorkImage image={proj.image} alt={proj.title} />
+                  : <div className="no-image-placeholder">No Preview</div>
+                }
+              </div>
+
             </div>
           </div>
-
-          {/* Dot Indicators with pinned indicator */}
-          <div className="carousel-dots">
-            {projects.map((proj, index) => (
-              <button
-                key={index}
-                className={`carousel-dot ${index === currentIndex ? "carousel-dot-active" : ""} ${proj.pinned ? "carousel-dot-pinned" : ""}`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Go to project ${index + 1}`}
-                data-cursor="disable"
-                title={proj.title}
-              />
-            ))}
-          </div>
-          <p className="carousel-legend">⭐ First 3 dots = Featured AI/ML Projects</p>
-        </div>
+        ))}
       </div>
+
+      {/* Scroll hint */}
+      {currentIndex < projects.length - 1 && (
+        <div className="scroll-hint" onClick={() => scrollToIndex(currentIndex + 1)}>
+          <span>Scroll</span>
+          <div className="scroll-arrow">↓</div>
+        </div>
+      )}
     </div>
   );
 };
