@@ -32,7 +32,8 @@ const projects = [
     tags: ["MediaPipe Tasks API", "OpenCV", "PyAutoGUI", "Apple M3 Optimized"],
     image: "/images/gesture_control.png",
     github: "https://github.com/AkkiKrsingh2005/ai-gesture-os-control",
-    demo: null,
+    demo: "https://github.com/AkkiKrsingh2005/ai-gesture-os-control",
+    demoLabel: "📂 View Project",
     pinned: true,
     accent: "#fb923c"
   },
@@ -168,7 +169,7 @@ const Work = () => {
                   {proj.demo && (
                     <a href={proj.demo} target="_blank" rel="noreferrer" className="cta-btn cta-btn-primary" style={{ background: `linear-gradient(135deg, ${proj.accent}, #8b5cf6)`, boxShadow: `0 4px 20px ${proj.accent}40` }}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                      Live Demo
+                      {proj.demoLabel ?? "Live Demo"}
                     </a>
                   )}
                 </div>
