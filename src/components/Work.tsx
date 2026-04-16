@@ -11,7 +11,7 @@ const projects = [
     image: "/images/smart_traffic.png",
     video: "traffic_demo.mp4",
     github: "https://github.com/ankitkumar572005/Smart-Traffic-System",
-    demo: null,
+    demo: "https://smart-traffic-system-mpm6axqd6hd9jblrjkiiyd.streamlit.app/",
     pinned: true,
     accent: "#ef4444"
   },
